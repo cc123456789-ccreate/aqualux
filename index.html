@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="color-scheme" content="dark"/>
+  <meta name="supported-color-schemes" content="dark"/>
   <title>AquaLux – Lavaggio Auto a Mano</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
   <style>
+    /* Force dark mode regardless of device setting */
+    :root { color-scheme: dark; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -1350,6 +1355,83 @@
       from { transform: translateY(100%); }
       to   { transform: translateY(0); }
     }
+    /* ── FORCE DARK — override system light mode ── */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --black:   #060d14;
+        --deep:    #071220;
+        --surface: #0a1828;
+        --lift:    #0f2035;
+        --gold:    #3ab8e0;
+        --gold2:   #7dd4f0;
+        --gold3:   #c8f0ff;
+        --white:   #eef8fc;
+        --muted:   #5a8aa0;
+        --line:    rgba(58,184,224,0.18);
+        --linew:   rgba(238,248,252,0.07);
+      }
+
+      body {
+        background: #060d14 !important;
+        color: #eef8fc !important;
+      }
+
+      /* force all white/light backgrounds dark */
+      .plan-card,
+      .slot-row,
+      .avail-plan-info,
+      .referral-card,
+      .contact-card,
+      .sheet,
+      .booking-summary,
+      .success-detail,
+      .success-card,
+      .confirm-bar,
+      .book-bar {
+        background: #0a1828 !important;
+        color: #eef8fc !important;
+      }
+
+      /* inputs */
+      .form-input {
+        background: #071220 !important;
+        color: #eef8fc !important;
+        border-color: rgba(58,184,224,0.25) !important;
+      }
+
+      /* pay options */
+      .pay-opt {
+        background: #071220 !important;
+        color: #eef8fc !important;
+      }
+
+      /* plan name, price etc */
+      .plan-name, .plan-price, .slot-time-txt, .slot-num,
+      .avail-plan-name, .avail-plan-price, .sheet-title,
+      .ref-title, .contact-title, .sec-title,
+      .sum-row .val, .suc-row .v, .summary-row .value {
+        color: #eef8fc !important;
+      }
+
+      /* borders */
+      .plan-card,
+      .slot-row,
+      .referral-card {
+        border-color: rgba(58,184,224,0.18) !important;
+      }
+
+      /* confirm/book bars */
+      .confirm-bar, .book-bar {
+        border-top-color: rgba(58,184,224,0.18) !important;
+      }
+
+      /* overlay sheet */
+      .overlay { background: rgba(4,10,20,0.85) !important; }
+
+      /* success screen */
+      #success-screen { color: #eef8fc !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -1747,11 +1829,11 @@
     Vedi le istruzioni nel codice sorgente (sezione TELEGRAM_BOT_TOKEN).
   </div>
 
-  <!-- WA fallback (shown only when Telegram not yet configured) -->
-  <div id="wa-fallback-wrap" class="wa-owner-fallback">
-    <p class="wa-fallback-label">📲 Telegram non ancora configurato — notifica manuale:</p>
+  <!-- WhatsApp notification button — always visible -->
+  <div id="wa-fallback-wrap" class="wa-owner-fallback" style="display:block">
+    <p class="wa-fallback-label">📲 Se WhatsApp non si è aperto:</p>
     <a id="wa-owner-btn" href="#" target="_blank" class="btn-wa-owner">
-      Invia riepilogo su WhatsApp
+      Apri WhatsApp →
     </a>
   </div>
 
@@ -1835,7 +1917,7 @@
       <div class="form-error" id="err3"></div>
       <div class="sheet-btn-row">
         <button class="sheet-back-btn" onclick="goStep2()">← Indietro</button>
-        <button class="sheet-confirm" style="flex:1" onclick="confirmBooking()">✓ Conferma</button>
+        <a id="wa-confirm-link" href="#" target="_blank" class="sheet-confirm" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px" onclick="confirmBooking()">✅ Conferma e invia su WhatsApp</a>
       </div>
     </div>
 
@@ -2047,6 +2129,20 @@ function goStep3() {
     row('Telefono', tel) +
     row('Pagamento', payLabel) +
     row('Totale', p.price, true);
+
+  // Pre-build WhatsApp URL and set directly on the confirm button/link
+  // This way the click is NATIVE — browser cannot block it
+  const ownerNum = '393473785847';
+  const preMsg = encodeURIComponent(
+    `🚗 PRENOTAZIONE AQUALUX\n` +
+    `👤 ${nome}\n` +
+    `🚙 ${auto}\n` +
+    `📞 ${tel}\n` +
+    `📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} · ${selSlot.time}\n` +
+    `🛁 ${p.label} · ${p.price}\n` +
+    `💳 ${payLabel}`
+  );
+  document.getElementById('wa-confirm-link').href = `https://wa.me/${ownerNum}?text=${preMsg}`;
   showStep(3);
 }
 
@@ -2090,20 +2186,21 @@ Prezzo: ${p.price}`);
   // 2. Cerca @userinfobot su Telegram → copia il tuo CHAT_ID
   // 3. Incolla TOKEN e CHAT_ID qui sotto e ripubblica su GitHub
   // ══════════════════════════════════════════════
-  const TELEGRAM_BOT_TOKEN = 'INSERISCI_QUI_IL_TUO_TOKEN'; // es. 7123456789:AAF...
-  const TELEGRAM_CHAT_ID   = 'INSERISCI_QUI_IL_TUO_CHAT_ID'; // es. 123456789
+  const TELEGRAM_BOT_TOKEN = '8469375190:AAGnf9TzqAROCqyuaFH5veaa4TRf3a7DSOE'; // es. 7123456789:AAF...
+  const TELEGRAM_CHAT_ID   = '1124102663'; // es. 123456789
+
+  // Link calendario compatto (senza dettagli lunghi)
+  const shortCal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&location=${calLoc}`;
 
   const tgMessage =
-    `\u{1F697} *NUOVA PRENOTAZIONE AQUALUX*\n\n` +
-    `\u{1F464} *Cliente:* ${nome}\n` +
-    `\u{1F699} *Auto:* ${auto}\n` +
-    `\u{1F4DE} *Tel:* ${tel}\n` +
-    `\u{1F4C5} *Data:* ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month}\n` +
-    `\u23F0 *Orario:* ${selSlot.time} (${p.dur || '1h 30min'})\n` +
-    `\u{1F6C1} *Servizio:* ${p.label}\n` +
-    `\u{1F4B0} *Prezzo:* ${p.price}\n` +
-    `\u{1F4B3} *Pagamento:* ${payLabel}\n\n` +
-    `[\u{1F4C6} Aggiungi in Google Calendar](${gcalUrl})`;
+    `🚗 *NUOVA PRENOTAZIONE*\n\n` +
+    `👤 *${nome}*\n` +
+    `🚙 ${auto}\n` +
+    `📞 ${tel}\n` +
+    `📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} · ${selSlot.time}\n` +
+    `🛁 ${p.label} · ${p.price}\n` +
+    `💳 ${payLabel}\n\n` +
+    `[📆 Aggiungi in Calendar](${shortCal})`;
 
   // Invio notifica Telegram (istantaneo, invisibile al cliente)
   if (TELEGRAM_BOT_TOKEN !== 'INSERISCI_QUI_IL_TUO_TOKEN') {
@@ -2120,23 +2217,8 @@ Prezzo: ${p.price}`);
   }
 
   // Fallback WA link (visibile nel success screen se Telegram non configurato)
-  const ownerNumber = '393473785847';
-  const waMsg = encodeURIComponent(
-    `NUOVA PRENOTAZIONE AQUALUX\n\n` +
-    `Cliente: ${nome}\n` +
-    `Auto: ${auto}\n` +
-    `Tel: ${tel}\n` +
-    `Data: ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month}\n` +
-    `Orario: ${selSlot.time} (${p.dur || '1h 30min'})\n` +
-    `Servizio: ${p.label}\n` +
-    `Prezzo: ${p.price}\n` +
-    `Pagamento: ${payLabel}\n\n` +
-    `Agenda: ${gcalUrl}`
-  );
-  document.getElementById('wa-owner-btn').href = `https://wa.me/${ownerNumber}?text=${waMsg}`;
-  // Show WA fallback only if Telegram not configured
-  document.getElementById('wa-fallback-wrap').style.display =
-    TELEGRAM_BOT_TOKEN === 'INSERISCI_QUI_IL_TUO_TOKEN' ? 'block' : 'none';
+  // WA già gestito tramite link diretto nel bottone (goStep3)
+  document.getElementById('wa-fallback-wrap').style.display = 'none';
 }
 
 function srow(l,v,g=false) {
