@@ -14,17 +14,17 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --black:   #060d14;
-      --deep:    #071220;
-      --surface: #0a1828;
-      --lift:    #0f2035;
-      --gold:    #3ab8e0;
-      --gold2:   #7dd4f0;
-      --gold3:   #c8f0ff;
-      --white:   #eef8fc;
-      --muted:   #5a8aa0;
-      --line:    rgba(58,184,224,0.18);
-      --linew:   rgba(238,248,252,0.07);
+      --black:   #03080f;
+      --deep:    #050f1c;
+      --surface: #081624;
+      --lift:    #0c1e30;
+      --gold:    #4ec8f0;
+      --gold2:   #90e0ff;
+      --gold3:   #d0f4ff;
+      --white:   #f0faff;
+      --muted:   #7ab8d0;
+      --line:    rgba(78,200,240,0.22);
+      --linew:   rgba(240,250,255,0.09);
     }
 
     html { scroll-behavior: smooth; }
@@ -235,22 +235,23 @@
 
     .hero-scroll {
       position: absolute;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 5;
+      bottom: 32px;
+      left: 0;
+      right: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 8px;
       animation: riseIn 1s ease 0.8s both;
+      z-index: 5;
     }
 
     .hero-scroll-text {
-      font-size: 8.5px;
+      font-size: 9px;
       letter-spacing: 3.5px;
       text-transform: uppercase;
-      color: var(--muted);
+      color: rgba(125,212,240,0.85);
+      text-align: center;
     }
 
     .scroll-line {
@@ -300,16 +301,16 @@
       font-size: 9px;
       letter-spacing: 4px;
       text-transform: uppercase;
-      color: var(--gold);
+      color: #4ec8f0;
       font-weight: 400;
     }
 
     .sec-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.9rem, 7vw, 2.8rem);
-      font-weight: 300;
+      font-weight: 400;
       letter-spacing: 1px;
-      color: var(--white);
+      color: #f0faff;
       line-height: 1.2;
     }
 
@@ -406,10 +407,10 @@
     .plan-name {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.75rem;
-      font-weight: 300;
+      font-weight: 400;
       letter-spacing: 2px;
       text-transform: uppercase;
-      color: var(--white);
+      color: #f0faff;
       line-height: 1;
     }
 
@@ -424,23 +425,26 @@
 
     .plan-price {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2.8rem;
-      font-weight: 300;
-      color: var(--gold2);
+      font-size: 3.8rem;
+      font-weight: 400;
+      color: #f0faff;
       line-height: 1;
+      letter-spacing: -1px;
     }
 
     .plan-currency {
-      font-size: 1.1rem;
+      font-size: 1.3rem;
       vertical-align: super;
-      color: var(--gold);
+      color: #4ec8f0;
+      font-weight: 300;
     }
 
     .plan-per {
       font-size: 10px;
-      color: var(--muted);
+      color: rgba(125,212,240,0.7);
       letter-spacing: 1px;
-      margin-top: 4px;
+      margin-top: 6px;
+      font-weight: 400;
     }
 
     .card-divider {
@@ -753,6 +757,109 @@
 
     .wa-icon { font-size: 1.1rem; }
 
+
+    /* ── WA POPUP ── */
+    #wa-popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,8,16,0.82);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: fadeIn 0.2s ease both;
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+
+    .wa-popup-box {
+      background: #07121e;
+      border: 1px solid rgba(78,200,240,0.25);
+      border-radius: 20px;
+      padding: 36px 28px;
+      max-width: 340px;
+      width: 100%;
+      text-align: center;
+      animation: scaleUp 0.25s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes scaleUp {
+      from { transform: scale(0.92); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .wa-popup-icon {
+      font-size: 3rem;
+      margin-bottom: 14px;
+    }
+
+    .wa-popup-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 400;
+      color: #f0faff;
+      margin-bottom: 8px;
+    }
+
+    .wa-popup-sub {
+      font-size: 12px;
+      color: #7ab8d0;
+      line-height: 1.7;
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
+    }
+
+    .wa-popup-btn-green {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: #25d366;
+      color: #fff;
+      font-family: 'Jost', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .wa-popup-btn-green:hover { background: #1da851; }
+
+    .wa-popup-btn-cal {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      border: 1.5px solid rgba(78,200,240,0.4);
+      color: #4ec8f0;
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      text-decoration: none;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: border-color 0.2s, background 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .wa-popup-btn-cal:hover { background: rgba(78,200,240,0.08); border-color: #4ec8f0; }
+
+    .wa-popup-btn-skip {
+      background: none;
+      border: none;
+      color: #5a8aa0;
+      font-family: 'Jost', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 8px;
+      transition: color 0.2s;
+    }
+    .wa-popup-btn-skip:hover { color: #7ab8d0; }
 
     /* ── BOOKING FORM ── */
     .form-group { margin-bottom: 16px; }
@@ -1293,6 +1400,153 @@
 
     .btn-wa-owner:hover { background: #25d366; color: var(--black); }
 
+    /* ── SCHERMATA FINALE COMPLETATA ── */
+    #final-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #03080f;
+      z-index: 300;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 28px;
+      text-align: center;
+    }
+
+    #final-screen.show {
+      display: flex;
+      animation: fadeIn 0.4s ease both;
+    }
+
+    .final-check-wrap {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .final-check-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 2px solid rgba(37,211,102,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: ringPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0.2); }
+      50%       { box-shadow: 0 0 0 20px rgba(37,211,102,0); }
+    }
+
+    .final-check-inner {
+      width: 84px;
+      height: 84px;
+      background: linear-gradient(135deg, #25d366, #1da851);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: scaleUp 0.5s cubic-bezier(.16,1,.3,1) 0.2s both;
+    }
+
+    .final-check-svg {
+      width: 42px;
+      height: 42px;
+      stroke: #fff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 60;
+      stroke-dashoffset: 60;
+      animation: drawCheck 0.5s ease 0.5s forwards;
+    }
+
+    @keyframes drawCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .final-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 400;
+      color: #f0faff;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      animation: riseIn 0.6s ease 0.6s both;
+    }
+
+    .final-subtitle {
+      font-size: 13px;
+      font-weight: 300;
+      color: #7ab8d0;
+      letter-spacing: 0.5px;
+      margin-bottom: 32px;
+      animation: riseIn 0.6s ease 0.75s both;
+    }
+
+    .final-appointment {
+      background: #07121e;
+      border: 1px solid rgba(78,200,240,0.2);
+      border-radius: 16px;
+      padding: 22px 28px;
+      margin-bottom: 36px;
+      animation: riseIn 0.6s ease 0.9s both;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .final-appt-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #4ec8f0;
+      margin-bottom: 12px;
+    }
+
+    .final-appt-day {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      font-weight: 300;
+      color: #f0faff;
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .final-appt-time {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #90e0ff;
+      letter-spacing: 1px;
+    }
+
+    .final-appt-service {
+      font-size: 11px;
+      color: #5a8aa0;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .final-home-btn {
+      background: none;
+      border: 1px solid rgba(78,200,240,0.25);
+      color: #5a8aa0;
+      font-family: 'Jost', sans-serif;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      animation: riseIn 0.6s ease 1s both;
+    }
+
+    .final-home-btn:hover { border-color: #4ec8f0; color: #4ec8f0; }
+
     .btn-restart {
       display: inline-block;
       padding: 12px 28px;
@@ -1372,7 +1626,7 @@
       }
 
       body {
-        background: #060d14 !important;
+        background: #03080f !important;
         color: #eef8fc !important;
       }
 
@@ -1740,9 +1994,9 @@
         </div>
       </div>
 
-      <a href="https://wa.me/393473785847?text=Ciao!%20Voglio%20info%20sull'offerta%20Porta%20un%20Amico%20di%20AquaLux" class="btn-ref-wa" target="_blank">
-        ✉ Attiva l'offerta su WhatsApp
-      </a>
+      <button class="btn-ref-wa" onclick="openWA('Ciao! Voglio info sull offerta Porta un Amico di AquaLux')">
+        💬 Attiva l'offerta su WhatsApp
+      </button>
     </div>
   </div>
 
@@ -1757,10 +2011,10 @@
       </div>
       <h3 class="contact-title">Hai domande?</h3>
       <p class="contact-sub">Scrivici su WhatsApp, rispondiamo in pochi minuti</p>
-      <a href="https://wa.me/393473785847?text=Ciao!%20Ho%20trovato%20il%20volantino%20di%20AquaLux%20e%20vorrei%20maggiori%20informazioni." class="btn-wa" target="_blank">
+      <button class="btn-wa" onclick="openWA('Ciao! Ho trovato il volantino di AquaLux e vorrei maggiori informazioni.')">
         <span class="wa-icon">💬</span>
         Contattaci su WhatsApp
-      </a>
+      </button>
     </div>
   </div>
 
@@ -1830,7 +2084,7 @@
   </div>
 
   <!-- WhatsApp notification button — always visible -->
-  <div id="wa-fallback-wrap" class="wa-owner-fallback" style="display:block">
+  <div id="wa-fallback-wrap" class="wa-owner-fallback" style="display:none">
     <p class="wa-fallback-label">📲 Se WhatsApp non si è aperto:</p>
     <a id="wa-owner-btn" href="#" target="_blank" class="btn-wa-owner">
       Apri WhatsApp →
@@ -1840,6 +2094,29 @@
   <button class="btn-restart" onclick="resetAll()">← Torna all'inizio</button>
 </div>
 
+
+<!-- ═══ SCHERMATA FINALE ═══ -->
+<div id="final-screen">
+  <div class="final-check-wrap">
+    <div class="final-check-ring">
+      <div class="final-check-inner">
+        <svg class="final-check-svg" viewBox="0 0 24 24">
+          <polyline points="4,13 9,18 20,7"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <div class="final-title">Prenotazione completata</div>
+  <div class="final-subtitle">Grazie! Ti abbiamo ricevuto.</div>
+  <div class="final-appointment">
+    <div class="final-appt-label">Il tuo appuntamento</div>
+    <div class="final-appt-day" id="final-day">—</div>
+    <div class="final-appt-time" id="final-time">—</div>
+    <div class="final-appt-service" id="final-service">—</div>
+    <div class="final-appt-meet" style="margin-top:14px;font-size:13px;color:#7ab8d0;font-style:italic" id="final-meet"></div>
+  </div>
+  <button class="final-home-btn" onclick="resetAll()">← Torna all'inizio</button>
+</div>
 
 <!-- ═══ FOOTER ═══ -->
 <footer class="footer">
@@ -1917,7 +2194,7 @@
       <div class="form-error" id="err3"></div>
       <div class="sheet-btn-row">
         <button class="sheet-back-btn" onclick="goStep2()">← Indietro</button>
-        <a id="wa-confirm-link" href="#" target="_blank" class="sheet-confirm" style="flex:1;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px" onclick="confirmBooking()">✅ Conferma e invia su WhatsApp</a>
+        <button class="sheet-confirm" style="flex:1" onclick="return handleConfirm()">✓ Conferma</button>
       </div>
     </div>
 
@@ -1995,15 +2272,24 @@ function genSlots(off) {
     const durMin  = DURATIONS[curPlan] || 30;
     const closing = timeToMin(CLOSING[dow]);
 
+    const isToday = (
+      day.getDate()     === new Date().getDate() &&
+      day.getMonth()    === new Date().getMonth() &&
+      day.getFullYear() === new Date().getFullYear()
+    );
+    const nowMin = isToday ? new Date().getHours() * 60 + new Date().getMinutes() : 0;
+
     sched.slots.forEach(t => {
-      // Escludi slot in cui il servizio finirebbe dopo l'orario di chiusura
+      // Escludi slot che finirebbero dopo la chiusura
       if (timeToMin(t) + durMin > closing) return;
+      // Escludi slot già passati oggi (aggiungi 30min di buffer)
+      if (isToday && timeToMin(t) <= nowMin + 30) return;
       list.push({
         dayName: DAYS[dow],
         dayNum:  day.getDate(),
         month:   day.toLocaleDateString('it-IT', { month:'short' }),
         time:    t,
-        occupied: false  // gestione reale prenotazioni via backend futuro
+        occupied: false
       });
     });
   }
@@ -2072,6 +2358,79 @@ function changeWeek(d) {
   renderSlots();
 }
 
+/* ── WhatsApp opener — app su mobile, web su desktop ── */
+function openWA(msg) {
+  const phone   = '393473785847';
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank');
+}
+
+/* ── Popup elegante "Vuoi aprire WhatsApp?" ── */
+function showWaPopup(appUrl) {
+  const old = document.getElementById('wa-popup-overlay');
+  if (old) old.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'wa-popup-overlay';
+  // Usa target="_blank" + rel per aprire wa.me in nuova scheda
+  // iOS apre automaticamente l'app WhatsApp da wa.me senza popup
+  overlay.innerHTML = `
+    <div class="wa-popup-box">
+      <div class="wa-popup-icon">✅</div>
+      <div class="wa-popup-title">Prenotazione confermata!</div>
+      <div class="wa-popup-sub">Premi il pulsante qui sotto,<br/>poi tocca <strong style="color:#f0faff">Invia</strong> su WhatsApp.</div>
+      <a href="${appUrl}" class="wa-popup-btn-green" target="_blank" rel="noopener" onclick="setTimeout(()=>closeWaPopup(true),1500)">
+        💬 &nbsp;Apri WhatsApp e invia
+      </a>
+      <button class="wa-popup-btn-skip" onclick="closeWaPopup()">Chiudi</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeWaPopup(); });
+}
+
+function closeWaPopup(showFinal) {
+  const el = document.getElementById('wa-popup-overlay');
+  if (el) { el.style.opacity = '0'; setTimeout(() => el.remove(), 200); }
+  if (showFinal) showFinalScreen();
+}
+
+function showFinalScreen() {
+  const d = window._waData;
+  if (!d) return;
+  // Popola i dati appuntamento
+  const months = {gen:'Gennaio',feb:'Febbraio',mar:'Marzo',apr:'Aprile',mag:'Maggio',
+    giu:'Giugno',lug:'Luglio',ago:'Agosto',set:'Settembre',ott:'Ottobre',nov:'Novembre',dic:'Dicembre'};
+  const monthFull = months[d.selSlot.month] || d.selSlot.month;
+  document.getElementById('final-day').textContent =
+    d.selSlot.dayName + ' ' + d.selSlot.dayNum + ' ' + monthFull;
+  document.getElementById('final-time').textContent = d.selSlot.time;
+  document.getElementById('final-service').textContent =
+    d.p.label + ' · ' + d.p.price;
+  document.getElementById('final-meet').textContent =
+    'Ci vediamo ' + d.selSlot.dayName.toLowerCase() + ' ' + d.selSlot.dayNum +
+    ' ' + monthFull + ' alle ' + d.selSlot.time + ' 👋';
+
+  // Nascondi success screen, mostra final screen
+  document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('final-screen').classList.add('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+
+function openWA(msg) {
+  const phone   = '393473785847';
+  const encoded = encodeURIComponent(msg);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (isMobile) {
+    // Prova prima whatsapp:// (apre l'app direttamente senza passare dal browser)
+    const appUrl = `whatsapp://send?phone=${phone}&text=${encoded}`;
+    window.location.href = appUrl;
+  } else {
+    // Desktop: apre WhatsApp Web
+    window.open(`https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`, '_blank');
+  }
+}
+
 /* ── step state ── */
 let payMethod = null;
 
@@ -2112,14 +2471,41 @@ function selectPay(method) {
   document.getElementById('pay-card').classList.toggle('selected', method==='card');
 }
 
-function goStep3() {
+async function goStep3() {
   if (!payMethod) { document.getElementById('err2').textContent = 'Seleziona un metodo di pagamento.'; return; }
   document.getElementById('err2').textContent = '';
   const p    = PLANS[curPlan];
   const nome = document.getElementById('inp-nome').value.trim();
   const auto = document.getElementById('inp-auto').value.trim();
   const tel  = document.getElementById('inp-tel').value.trim();
-  const payLabel = payMethod === 'cash' ? '💵 Contanti' : '💳 Carta (link su WhatsApp)';
+  const payLabel = payMethod === 'cash' ? 'Contanti' : 'Carta';
+
+  // ── Google Calendar URL ──
+  const [hh, mm] = selSlot.time.split(':').map(Number);
+  const durMin   = DURATIONS[curPlan] || 30;
+  const year     = new Date().getFullYear();
+  const monthMap = {gen:1,feb:2,mar:3,apr:4,mag:5,giu:6,lug:7,ago:8,set:9,ott:10,nov:11,dic:12};
+  const mNum     = monthMap[selSlot.month] || (new Date().getMonth()+1);
+  const pad      = n => String(n).padStart(2,'0');
+  const startDt  = `${year}${pad(mNum)}${pad(selSlot.dayNum)}T${pad(hh)}${pad(mm)}00`;
+  const endDate  = new Date(year, mNum-1, selSlot.dayNum, hh, mm + durMin);
+  const endDt    = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
+  const calTitle = encodeURIComponent(`AquaLux – ${p.label} – ${nome} (${auto})`);
+  const calLoc   = encodeURIComponent('Via del Mercato, Caponago');
+  const calDet   = encodeURIComponent(`Cliente: ${nome} | Auto: ${auto} | Tel: ${tel} | Prezzo: ${p.price} | Pagamento: ${payLabel}`);
+  const gcalUrl  = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&location=${calLoc}&details=${calDet}`;
+
+  // ── Accorcia link con TinyURL ──
+  let shortLink = gcalUrl;
+  try {
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(gcalUrl)}`);
+    if (res.ok) shortLink = (await res.text()).trim();
+  } catch(e) {}
+
+  // ── Salva dati globali per uso in handleConfirm ──
+  window._waData = { nome, auto, tel, p, payLabel, selSlot: {...selSlot}, gcalUrl, shortLink };
+
+  // ── Riepilogo ──
   document.getElementById('summary-list').innerHTML =
     row('Servizio', p.label) +
     row('Data', selSlot.dayName + ' ' + selSlot.dayNum + ' ' + selSlot.month) +
@@ -2130,21 +2516,52 @@ function goStep3() {
     row('Pagamento', payLabel) +
     row('Totale', p.price, true);
 
-  // Pre-build WhatsApp URL and set directly on the confirm button/link
-  // This way the click is NATIVE — browser cannot block it
-  const ownerNum = '393473785847';
-  const preMsg = encodeURIComponent(
-    `🚗 PRENOTAZIONE AQUALUX\n` +
-    `👤 ${nome}\n` +
-    `🚙 ${auto}\n` +
-    `📞 ${tel}\n` +
-    `📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} · ${selSlot.time}\n` +
-    `🛁 ${p.label} · ${p.price}\n` +
-    `💳 ${payLabel}`
-  );
-  document.getElementById('wa-confirm-link').href = `https://wa.me/${ownerNum}?text=${preMsg}`;
   showStep(3);
 }
+
+
+function handleConfirm() {
+  confirmBooking();
+
+  const d = window._waData;
+  if (!d) return false;
+
+  const ownerNum = '393473785847';
+
+  // ── Messaggio per il PROPRIETARIO (te) ──
+  // Contiene: dati prenotazione + link Google Calendar come hyperlink
+  // WhatsApp mostra il link come anteprima cliccabile — nessun muro di testo
+  const msgOwner =
+    `🚗 PRENOTAZIONE AQUALUX
+` +
+    `👤 ${d.nome}
+` +
+    `🚙 ${d.auto}
+` +
+    `📞 ${d.tel}
+` +
+    `📅 ${d.selSlot.dayName} ${d.selSlot.dayNum} ${d.selSlot.month} · ${d.selSlot.time}
+` +
+    `🛁 ${d.p.label} · ${d.p.price}
+` +
+    `💳 ${d.payLabel}
+
+` +
+    `📆 Aggiungi al calendario
+` +
+    `${d.shortLink}`;
+
+  // whatsapp:// sul tag <a> con click nativo — apre app direttamente
+  const encoded  = encodeURIComponent(msgOwner);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const appUrl   = isMobile
+    ? `whatsapp://send?phone=${ownerNum}&text=${encoded}`
+    : `https://web.whatsapp.com/send?phone=${ownerNum}&text=${encoded}`;
+
+  showWaPopup(appUrl);
+  return false;
+}
+
 
 function row(l,v,gold=false) {
   return '<div class="sum-row"><span class="lbl">'+l+'</span><span class="val'+(gold?' gold':'')+'">'+v+'</span></div>';
@@ -2192,15 +2609,25 @@ Prezzo: ${p.price}`);
   // Link calendario compatto (senza dettagli lunghi)
   const shortCal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&location=${calLoc}`;
 
+  // ── Google Calendar con TUTTI i dati cliente dentro ──
+  const richCal = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+    `&text=${encodeURIComponent(`AquaLux – ${p.label} – ${nome}`)}` +
+    `&dates=${startDt}/${endDt}` +
+    `&location=${encodeURIComponent('Via del Mercato, Caponago')}` +
+    `&details=${encodeURIComponent(`👤 Cliente: ${nome}\n🚙 Auto: ${auto}\n📞 Tel: ${tel}\n🛁 Servizio: ${p.label}\n💰 Prezzo: ${p.price}\n💳 Pagamento: ${payLabel}\n📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} – ${selSlot.time}`)}`;
+
+  // ── Messaggio Telegram ──
+  // Telegram supporta [testo visibile](url nascosto) — link completamente nascosto
+  // HTML parse_mode: <b>grassetto</b> e <a href>hyperlink nascosto
   const tgMessage =
-    `🚗 *NUOVA PRENOTAZIONE*\n\n` +
-    `👤 *${nome}*\n` +
-    `🚙 ${auto}\n` +
-    `📞 ${tel}\n` +
-    `📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} · ${selSlot.time}\n` +
-    `🛁 ${p.label} · ${p.price}\n` +
-    `💳 ${payLabel}\n\n` +
-    `[📆 Aggiungi in Calendar](${shortCal})`;
+    `🚗 <b>NUOVA PRENOTAZIONE AQUALUX</b>\n\n` +
+    `👤 <b>Cliente:</b> ${nome}\n` +
+    `🚙 <b>Auto:</b> ${auto}\n` +
+    `📞 <b>Tel:</b> ${tel}\n` +
+    `📅 <b>Data:</b> ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} - ${selSlot.time}\n` +
+    `🛁 <b>Servizio:</b> ${p.label} - ${p.price}\n` +
+    `💳 <b>Pagamento:</b> ${payLabel}\n\n` +
+    `<a href="${richCal}">📆 Aggiungi al calendario</a>`
 
   // Invio notifica Telegram (istantaneo, invisibile al cliente)
   if (TELEGRAM_BOT_TOKEN !== 'INSERISCI_QUI_IL_TUO_TOKEN') {
@@ -2210,7 +2637,7 @@ Prezzo: ${p.price}`);
       body: JSON.stringify({
         chat_id: TELEGRAM_CHAT_ID,
         text: tgMessage,
-        parse_mode: 'Markdown',
+        parse_mode: 'HTML',
         disable_web_page_preview: false
       })
     }).catch(() => {});
@@ -2235,9 +2662,10 @@ function goBack() {
 
 function resetAll() {
   document.getElementById('success-screen').classList.remove('show');
+  document.getElementById('final-screen').classList.remove('show');
   document.getElementById('plans-section').style.display = '';
   document.getElementById('hero-section').style.display  = '';
-  curPlan = null; selSlot = null;
+  curPlan = null; selSlot = null; window._waData = null;
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
