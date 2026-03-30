@@ -6,6 +6,10 @@
   <meta name="color-scheme" content="dark"/>
   <meta name="supported-color-schemes" content="dark"/>
   <title>AquaLux – Lavaggio Auto a Mano</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
   <style>
     /* Force dark mode regardless of device setting */
@@ -445,6 +449,40 @@
       letter-spacing: 1px;
       margin-top: 6px;
       font-weight: 400;
+    }
+
+    /* ── ESSENZIALE TOGGLE ── */
+    .ess-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .ess-opt {
+      flex: 1;
+      padding: 9px 10px;
+      background: transparent;
+      border: 1px solid rgba(78,200,240,0.2);
+      border-radius: 8px;
+      color: #5a8aa0;
+      font-family: 'Jost', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ess-opt.active {
+      background: rgba(78,200,240,0.12);
+      border-color: #4ec8f0;
+      color: #90e0ff;
+      font-weight: 500;
+    }
+
+    .ess-opt:hover:not(.active) {
+      border-color: rgba(78,200,240,0.4);
+      color: #7ab8d0;
     }
 
     .card-divider {
@@ -892,6 +930,38 @@
     .form-input::placeholder { color: var(--muted); font-size: 13px; }
     .form-input:focus { border-color: var(--gold); }
 
+    .field-optional {
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      text-transform: none;
+      font-weight: 300;
+      margin-left: 4px;
+    }
+
+    .form-divider-or {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 4px 0 16px;
+    }
+
+    .form-divider-or span:first-child,
+    .form-divider-or span:last-child {
+      flex: 1;
+      height: 1px;
+      background: var(--linew);
+    }
+
+    .or-text {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      flex: 0;
+      white-space: nowrap;
+    }
+
     .form-error {
       font-size: 11px;
       color: #e05555;
@@ -1062,6 +1132,10 @@
 
     .slot-row.free:hover { padding-left: 6px; }
     .slot-row.occupied { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+    .slot-row.booked-owner { opacity: 1 !important; background: rgba(200,40,40,0.12) !important; border-color: rgba(200,40,40,0.35) !important; }
+    .slot-row.booked-owner .slot-status-dot { background: #e05555 !important; box-shadow: 0 0 6px #e05555 !important; }
+    .slot-row.booked-owner .slot-time-txt { color: #f0a0a0 !important; }
+    .slot-row.booked-owner .slot-daynum { color: #e08080 !important; }
     .slot-row.selected { padding-left: 6px; }
 
     .slot-left { display: flex; align-items: center; gap: 18px; }
@@ -1884,12 +1958,12 @@
   <div class="plans-wrap">
 
     <!-- ESSENZIALE -->
-    <div class="plan-card" onclick="choosePlan('essenziale')">
+    <div class="plan-card" id="card-essenziale">
       <div class="card-inner">
         <div class="card-left">
           <div class="plan-badge">Livello I</div>
           <div class="plan-name">Essenziale</div>
-          <div class="plan-desc">Solo esterno — rapido ed efficace</div>
+          <div class="plan-desc">Scegli cosa preferisci — stesso prezzo</div>
         </div>
         <div class="card-right">
           <div class="plan-price"><span class="plan-currency">€</span>15</div>
@@ -1897,14 +1971,36 @@
         </div>
       </div>
       <div class="card-divider"></div>
-      <ul class="features">
-        <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Lavaggio esterno a mano</li>
+
+      <!-- Toggle esterno / interno -->
+      <div class="ess-toggle">
+        <button class="ess-opt active" id="ess-ext" onclick="selectEss('ext', event)">
+          🚗 Esterno
+        </button>
+        <button class="ess-opt" id="ess-int" onclick="selectEss('int', event)">
+          🪑 Interno
+        </button>
+      </div>
+
+      <!-- Features esterno -->
+      <ul class="features" id="ess-feat-ext">
+        <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Lavaggio carrozzeria a mano</li>
         <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Asciugatura con panni in microfibra</li>
         <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Vetri esterni</li>
-        <li class="dim"><span class="feat-mark no"></span> Pulizia interni e aspirazione</li>
-        <li class="dim"><span class="feat-mark no"></span> Cerchi e trattamento gomme</li>
+        <li class="dim"><span class="feat-mark no"></span> Pulizia interni</li>
+        <li class="dim"><span class="feat-mark no"></span> Cerchi e gomme</li>
       </ul>
-      <button class="btn-choose">Scegli — €15</button>
+
+      <!-- Features interno -->
+      <ul class="features" id="ess-feat-int" style="display:none">
+        <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Aspirazione sedili e tappeti</li>
+        <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Pulizia cruscotto e plastiche</li>
+        <li><span class="feat-mark"><svg viewBox="0 0 8 8"><polyline points="1,4 3,6 7,2" stroke="#b8924a" stroke-width="1.2" fill="none"/></svg></span> Vetri interni</li>
+        <li class="dim"><span class="feat-mark no"></span> Lavaggio esterno</li>
+        <li class="dim"><span class="feat-mark no"></span> Cerchi e gomme</li>
+      </ul>
+
+      <button class="btn-choose" onclick="choosePlan('essenziale')">Scegli — €15</button>
     </div>
 
     <!-- COMPLETO -->
@@ -2144,7 +2240,7 @@
 
     <!-- STEP 1: dati cliente -->
     <div id="step1">
-      <div class="sheet-pre">Passo 1 di 3</div>
+      <div class="sheet-pre">Passo 1 di 2</div>
       <div class="sheet-title">I tuoi dati</div>
       <div class="form-group">
         <label class="form-label">Nome e cognome</label>
@@ -2154,10 +2250,6 @@
         <label class="form-label">Modello dell'auto</label>
         <input class="form-input" id="inp-auto" type="text" placeholder="es. Audi A4, BMW Serie 3…" autocomplete="off"/>
       </div>
-      <div class="form-group">
-        <label class="form-label">Numero di telefono</label>
-        <input class="form-input" id="inp-tel" type="tel" placeholder="es. 333 1234567" autocomplete="tel"/>
-      </div>
       <div class="form-error" id="err1"></div>
       <button class="sheet-confirm" onclick="goStep2()">Avanti →</button>
       <button class="sheet-cancel-btn" onclick="closeSheet()">Annulla</button>
@@ -2165,7 +2257,7 @@
 
     <!-- STEP 2: pagamento -->
     <div id="step2" style="display:none">
-      <div class="sheet-pre">Passo 2 di 3</div>
+      <div class="sheet-pre">Passo 2 di 2</div>
       <div class="sheet-title">Come paghi?</div>
       <div class="pay-options">
         <div class="pay-opt" id="pay-cash" onclick="selectPay('cash')">
@@ -2188,7 +2280,7 @@
 
     <!-- STEP 3: riepilogo finale -->
     <div id="step3" style="display:none">
-      <div class="sheet-pre">Passo 3 di 3</div>
+      <div class="sheet-pre">Riepilogo</div>
       <div class="sheet-title">Conferma</div>
       <div class="summary-list" id="summary-list"></div>
       <div class="form-error" id="err3"></div>
@@ -2297,6 +2389,10 @@ function genSlots(off) {
 }
 
 function choosePlan(plan) {
+  // Per Essenziale, aggiorna il label con la scelta esterno/interno
+  if (plan === 'essenziale') {
+    PLANS.essenziale.label = essType === 'ext' ? 'Essenziale Esterno' : 'Essenziale Interno';
+  }
   curPlan = plan; weekOff = 0; selSlot = null;
   document.getElementById('book-bar').classList.remove('show');
 
@@ -2320,9 +2416,12 @@ function renderSlots() {
   const list = document.getElementById('slots-list');
   list.innerHTML = '';
   slots.forEach((s, i) => {
-    const cls = s.occupied ? 'occupied' : 'free';
+    const bookedByOwner = isBooked(s.dayNum, s.month, s.time);
+    const isOccupied    = s.occupied || bookedByOwner;
+    const cls = isOccupied ? 'occupied' : 'free';
+    const extraCls = bookedByOwner ? ' booked-owner' : '';
     const row = document.createElement('div');
-    row.className = 'slot-row ' + cls;
+    row.className = 'slot-row ' + cls + extraCls;
     row.id = 'sr-' + i;
     row.innerHTML =
       '<div class="slot-left">' +
@@ -2330,7 +2429,7 @@ function renderSlots() {
         '<div><div class="slot-time-txt">' + s.time + '</div><div class="slot-dur">' + s.month + ' &middot; ' + PLANS[curPlan].dur + '</div></div>' +
       '</div>' +
       '<div class="slot-status-dot"></div>';
-    if (!s.occupied) row.onclick = () => pickSlot(i);
+    if (!isOccupied) row.onclick = () => pickSlot(i);
     list.appendChild(row);
   });
 }
@@ -2358,6 +2457,63 @@ function changeWeek(d) {
   renderSlots();
 }
 
+/* ── SLOT OCCUPATI — Firebase (inizializzato dopo SDK) ── */
+let db = null;
+let bookedRef = null;
+let _bookedCache = {};
+
+function slotKey(dayNum, month, time) {
+  return dayNum + '_' + month + '_' + time.replace(':', 'h');
+}
+
+function isBooked(dayNum, month, time) {
+  return !!_bookedCache[slotKey(dayNum, month, time)];
+}
+
+function addBookedSlot(dayNum, month, time) {
+  if (!bookedRef) return;
+  const key = slotKey(dayNum, month, time);
+  bookedRef.child(key).set(true).catch(e => console.warn('Firebase write error:', e));
+}
+
+function initFirebase() {
+  if (typeof firebase === 'undefined') { setTimeout(initFirebase, 100); return; }
+  const firebaseConfig = {
+    apiKey:            "AIzaSyA-GNWTvL8e2p7uwHHhX9wA_Jp9DAeEyO4",
+    authDomain:        "acqualux-ad592.firebaseapp.com",
+    databaseURL:       "https://acqualux-ad592-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:         "acqualux-ad592",
+    storageBucket:     "acqualux-ad592.firebasestorage.app",
+    messagingSenderId: "163734101229",
+    appId:             "1:163734101229:web:cda7a79f5f17d8492100e4"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  db        = firebase.database();
+  bookedRef = db.ref('booked_slots');
+  bookedRef.on('value', snapshot => {
+    _bookedCache = snapshot.val() || {};
+    if (document.getElementById('avail-section') &&
+        document.getElementById('avail-section').classList.contains('show')) {
+      renderSlots();
+    }
+  });
+}
+
+// Avvia Firebase appena il DOM è pronto
+document.addEventListener('DOMContentLoaded', initFirebase);
+
+/* ── Essenziale toggle esterno/interno ── */
+let essType = 'ext'; // default esterno
+
+function selectEss(type, e) {
+  e.stopPropagation(); // non triggerare il choosePlan sulla card
+  essType = type;
+  document.getElementById('ess-ext').classList.toggle('active', type === 'ext');
+  document.getElementById('ess-int').classList.toggle('active', type === 'int');
+  document.getElementById('ess-feat-ext').style.display = type === 'ext' ? '' : 'none';
+  document.getElementById('ess-feat-int').style.display = type === 'int' ? '' : 'none';
+}
+
 /* ── WhatsApp opener — app su mobile, web su desktop ── */
 function openWA(msg) {
   const phone   = '393473785847';
@@ -2366,21 +2522,33 @@ function openWA(msg) {
 }
 
 /* ── Popup elegante "Vuoi aprire WhatsApp?" ── */
-function showWaPopup(appUrl) {
+function showWaPopup(appUrl) { showContactPopup('wa', appUrl, ''); } // compatibilità
+
+function showContactPopup(type, appUrl, calLink) {
   const old = document.getElementById('wa-popup-overlay');
   if (old) old.remove();
 
+  const isWa      = type === 'wa';
+  const icon      = isWa ? '💬' : '📧';
+  const title     = isWa ? 'Vuoi aprire WhatsApp?' : 'Vuoi inviare una email?';
+  const sub       = isWa
+    ? `Il messaggio è pronto.<br/>Ti basterà premere <strong style="color:#f0faff">Invia</strong>.`
+    : `L'app Mail si aprirà con tutto precompilato.<br/>Premi <strong style="color:#f0faff">Invia</strong>.`;
+  const btnLabel  = isWa ? '💬 &nbsp;Apri WhatsApp e invia' : '📧 &nbsp;Apri Mail e invia';
+  const btnStyle  = isWa
+    ? 'background:linear-gradient(135deg,#25d366,#1da851)'
+    : 'background:linear-gradient(135deg,#4ec8f0,#2a9dc0)';
+
   const overlay = document.createElement('div');
   overlay.id = 'wa-popup-overlay';
-  // Usa target="_blank" + rel per aprire wa.me in nuova scheda
-  // iOS apre automaticamente l'app WhatsApp da wa.me senza popup
   overlay.innerHTML = `
     <div class="wa-popup-box">
-      <div class="wa-popup-icon">✅</div>
-      <div class="wa-popup-title">Prenotazione confermata!</div>
-      <div class="wa-popup-sub">Premi il pulsante qui sotto,<br/>poi tocca <strong style="color:#f0faff">Invia</strong> su WhatsApp.</div>
-      <a href="${appUrl}" class="wa-popup-btn-green" target="_blank" rel="noopener" onclick="setTimeout(()=>closeWaPopup(true),1500)">
-        💬 &nbsp;Apri WhatsApp e invia
+      <div class="wa-popup-icon">${icon}</div>
+      <div class="wa-popup-title">${title}</div>
+      <div class="wa-popup-sub">${sub}</div>
+      <a href="${appUrl}" class="wa-popup-btn-green" style="${btnStyle}"
+         onclick="setTimeout(()=>closeWaPopup(true),1500)">
+        ${btnLabel}
       </a>
       <button class="wa-popup-btn-skip" onclick="closeWaPopup()">Chiudi</button>
     </div>`;
@@ -2437,7 +2605,7 @@ let payMethod = null;
 function openSheet() {
   if (!selSlot) return;
   // reset form
-  ['inp-nome','inp-auto','inp-tel'].forEach(id => { document.getElementById(id).value = ''; });
+  ['inp-nome','inp-auto'].forEach(id => { document.getElementById(id).value = ''; });
   ['err1','err2','err3'].forEach(id => { document.getElementById(id).textContent = ''; });
   payMethod = null;
   document.querySelectorAll('.pay-opt').forEach(el => el.classList.remove('selected'));
@@ -2456,11 +2624,9 @@ function goStep1() { showStep(1); }
 function goStep2() {
   const nome = document.getElementById('inp-nome').value.trim();
   const auto = document.getElementById('inp-auto').value.trim();
-  const tel  = document.getElementById('inp-tel').value.trim();
   const err  = document.getElementById('err1');
   if (!nome) { err.textContent = 'Inserisci il tuo nome e cognome.'; return; }
   if (!auto) { err.textContent = 'Inserisci il modello della tua auto.'; return; }
-  if (!tel || tel.replace(/\D/g,'').length < 8) { err.textContent = 'Inserisci un numero di telefono valido.'; return; }
   err.textContent = '';
   showStep(2);
 }
@@ -2474,10 +2640,10 @@ function selectPay(method) {
 async function goStep3() {
   if (!payMethod) { document.getElementById('err2').textContent = 'Seleziona un metodo di pagamento.'; return; }
   document.getElementById('err2').textContent = '';
-  const p    = PLANS[curPlan];
-  const nome = document.getElementById('inp-nome').value.trim();
-  const auto = document.getElementById('inp-auto').value.trim();
-  const tel  = document.getElementById('inp-tel').value.trim();
+
+  const p        = PLANS[curPlan];
+  const nome     = document.getElementById('inp-nome').value.trim();
+  const auto     = document.getElementById('inp-auto').value.trim();
   const payLabel = payMethod === 'cash' ? 'Contanti' : 'Carta';
 
   // ── Google Calendar URL ──
@@ -2487,38 +2653,36 @@ async function goStep3() {
   const monthMap = {gen:1,feb:2,mar:3,apr:4,mag:5,giu:6,lug:7,ago:8,set:9,ott:10,nov:11,dic:12};
   const mNum     = monthMap[selSlot.month] || (new Date().getMonth()+1);
   const pad      = n => String(n).padStart(2,'0');
-  const startDt  = `${year}${pad(mNum)}${pad(selSlot.dayNum)}T${pad(hh)}${pad(mm)}00`;
+  const startDt  = year + pad(mNum) + pad(selSlot.dayNum) + 'T' + pad(hh) + pad(mm) + '00';
   const endDate  = new Date(year, mNum-1, selSlot.dayNum, hh, mm + durMin);
-  const endDt    = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
-  const calTitle = encodeURIComponent(`AquaLux – ${p.label} – ${nome} (${auto})`);
+  const endDt    = endDate.getFullYear() + pad(endDate.getMonth()+1) + pad(endDate.getDate()) + 'T' + pad(endDate.getHours()) + pad(endDate.getMinutes()) + '00';
+  const calTitle = encodeURIComponent('AquaLux - ' + p.label + ' - ' + nome + ' (' + auto + ')');
   const calLoc   = encodeURIComponent('Via del Mercato, Caponago');
-  const calDet   = encodeURIComponent(`Cliente: ${nome} | Auto: ${auto} | Tel: ${tel} | Prezzo: ${p.price} | Pagamento: ${payLabel}`);
-  const gcalUrl  = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&location=${calLoc}&details=${calDet}`;
+  const calDet   = encodeURIComponent('Cliente: ' + nome + ' | Auto: ' + auto + ' | Servizio: ' + p.label + ' | Prezzo: ' + p.price + ' | Pagamento: ' + payLabel);
+  const gcalUrl  = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + calTitle + '&dates=' + startDt + '/' + endDt + '&location=' + calLoc + '&details=' + calDet;
 
   // ── Accorcia link con TinyURL ──
   let shortLink = gcalUrl;
   try {
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(gcalUrl)}`);
+    const res = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(gcalUrl));
     if (res.ok) shortLink = (await res.text()).trim();
   } catch(e) {}
 
-  // ── Salva dati globali per uso in handleConfirm ──
-  window._waData = { nome, auto, tel, p, payLabel, selSlot: {...selSlot}, gcalUrl, shortLink };
+  // ── Salva per handleConfirm ──
+  window._waData = { nome, auto, p, payLabel, selSlot: {...selSlot}, shortLink };
 
   // ── Riepilogo ──
   document.getElementById('summary-list').innerHTML =
     row('Servizio', p.label) +
     row('Data', selSlot.dayName + ' ' + selSlot.dayNum + ' ' + selSlot.month) +
-    row('Orario', selSlot.time + ' (' + p.dur + ')') +
+    row('Orario', selSlot.time + ' (' + (p.dur || '~30 min') + ')') +
     row('Intestatario', nome) +
     row('Auto', auto) +
-    row('Telefono', tel) +
     row('Pagamento', payLabel) +
     row('Totale', p.price, true);
 
   showStep(3);
 }
-
 
 function handleConfirm() {
   confirmBooking();
@@ -2526,42 +2690,27 @@ function handleConfirm() {
   const d = window._waData;
   if (!d) return false;
 
-  const ownerNum = '393473785847';
+  const ownerNum   = '393473785847';
+  const ownerEmail = 'business.cc.seller@gmail.com';
 
-  // ── Messaggio per il PROPRIETARIO (te) ──
-  // Contiene: dati prenotazione + link Google Calendar come hyperlink
-  // WhatsApp mostra il link come anteprima cliccabile — nessun muro di testo
-  const msgOwner =
-    `🚗 PRENOTAZIONE AQUALUX
-` +
-    `👤 ${d.nome}
-` +
-    `🚙 ${d.auto}
-` +
-    `📞 ${d.tel}
-` +
-    `📅 ${d.selSlot.dayName} ${d.selSlot.dayNum} ${d.selSlot.month} · ${d.selSlot.time}
-` +
-    `🛁 ${d.p.label} · ${d.p.price}
-` +
-    `💳 ${d.payLabel}
-
-` +
-    `📆 Aggiungi al calendario
-` +
-    `${d.shortLink}`;
-
-  // whatsapp:// sul tag <a> con click nativo — apre app direttamente
-  const encoded  = encodeURIComponent(msgOwner);
+  // ── Messaggio WhatsApp — il cliente ci dà il numero inviando ──
+  const msgWa =
+    `🚗 PRENOTAZIONE AQUALUX\n` +
+    `👤 ${d.nome}\n` +
+    `🚙 ${d.auto}\n` +
+    `📅 ${d.selSlot.dayName} ${d.selSlot.dayNum} ${d.selSlot.month} · ${d.selSlot.time}\n` +
+    `🛁 ${d.p.label} · ${d.p.price}\n` +
+    `💳 ${d.payLabel}\n\n` +
+    `📆 Aggiungi al calendario\n${d.shortLink}`;
+  const encoded  = encodeURIComponent(msgWa);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   const appUrl   = isMobile
     ? `whatsapp://send?phone=${ownerNum}&text=${encoded}`
     : `https://web.whatsapp.com/send?phone=${ownerNum}&text=${encoded}`;
+  showContactPopup('wa', appUrl);
 
-  showWaPopup(appUrl);
   return false;
 }
-
 
 function row(l,v,gold=false) {
   return '<div class="sum-row"><span class="lbl">'+l+'</span><span class="val'+(gold?' gold':'')+'">'+v+'</span></div>';
@@ -2571,83 +2720,29 @@ function sheetOutside(e) { if (e.target.id === 'overlay') closeSheet(); }
 function closeSheet() { document.getElementById('overlay').classList.remove('open'); }
 
 function confirmBooking() {
-  const p        = PLANS[curPlan];
-  const nome     = document.getElementById('inp-nome').value.trim();
-  const auto     = document.getElementById('inp-auto').value.trim();
-  const tel      = document.getElementById('inp-tel').value.trim();
-  const payLabel = payMethod === 'cash' ? 'Contanti' : 'Carta (link WhatsApp)';
+  // Salva slot come occupato
+  if (selSlot) addBookedSlot(selSlot.dayNum, selSlot.month, selSlot.time);
 
-  // ── Build Google Calendar URL (for the OWNER) ──
-  const [hh, mm]   = selSlot.time.split(':').map(Number);
-  const durMin     = DURATIONS[curPlan] || 60;
-  const year       = new Date().getFullYear();
-  const monthMap   = {gen:1,feb:2,mar:3,apr:4,mag:5,giu:6,lug:7,ago:8,set:9,ott:10,nov:11,dic:12};
-  const mNum       = monthMap[selSlot.month] || (new Date().getMonth()+1);
-  const pad        = n => String(n).padStart(2,'0');
-  const startDt    = `${year}${pad(mNum)}${pad(selSlot.dayNum)}T${pad(hh)}${pad(mm)}00`;
-  const endDate    = new Date(year, mNum-1, selSlot.dayNum, hh, mm + durMin);
-  const endDt      = `${endDate.getFullYear()}${pad(endDate.getMonth()+1)}${pad(endDate.getDate())}T${pad(endDate.getHours())}${pad(endDate.getMinutes())}00`;
-  const calTitle   = encodeURIComponent(`AquaLux – ${p.label} – ${nome} (${auto})`);
-  const calDetails = encodeURIComponent(`Cliente: ${nome}
-Auto: ${auto}
-Tel: ${tel}
-Pagamento: ${payLabel}
-Prezzo: ${p.price}`);
-  const calLoc     = encodeURIComponent('Via del Mercato, Caponago');
-  const gcalUrl    = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&details=${calDetails}&location=${calLoc}`;
+  const d = window._waData;
+  if (!d) return;
 
-  // ══════════════════════════════════════════════
-  // NOTIFICA IMMEDIATA via Telegram Bot
-  // Setup (3 minuti, una sola volta):
-  // 1. Apri Telegram → cerca @BotFather → /newbot → copia il TOKEN
-  // 2. Cerca @userinfobot su Telegram → copia il tuo CHAT_ID
-  // 3. Incolla TOKEN e CHAT_ID qui sotto e ripubblica su GitHub
-  // ══════════════════════════════════════════════
-  const TELEGRAM_BOT_TOKEN = '8469375190:AAGnf9TzqAROCqyuaFH5veaa4TRf3a7DSOE'; // es. 7123456789:AAF...
-  const TELEGRAM_CHAT_ID   = '1124102663'; // es. 123456789
+  document.getElementById('success-detail').innerHTML =
+    srow('Servizio', d.p.label) +
+    srow('Data', d.selSlot.dayName + ' ' + d.selSlot.dayNum + ' ' + d.selSlot.month) +
+    srow('Orario', d.selSlot.time) +
+    srow('Intestatario', d.nome) +
+    srow('Auto', d.auto) +
+    srow('Pagamento', d.payLabel) +
+    srow('Prezzo', d.p.price, true);
 
-  // Link calendario compatto (senza dettagli lunghi)
-  const shortCal = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&dates=${startDt}/${endDt}&location=${calLoc}`;
-
-  // ── Google Calendar con TUTTI i dati cliente dentro ──
-  const richCal = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
-    `&text=${encodeURIComponent(`AquaLux – ${p.label} – ${nome}`)}` +
-    `&dates=${startDt}/${endDt}` +
-    `&location=${encodeURIComponent('Via del Mercato, Caponago')}` +
-    `&details=${encodeURIComponent(`👤 Cliente: ${nome}\n🚙 Auto: ${auto}\n📞 Tel: ${tel}\n🛁 Servizio: ${p.label}\n💰 Prezzo: ${p.price}\n💳 Pagamento: ${payLabel}\n📅 ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} – ${selSlot.time}`)}`;
-
-  // ── Messaggio Telegram ──
-  // Telegram supporta [testo visibile](url nascosto) — link completamente nascosto
-  // HTML parse_mode: <b>grassetto</b> e <a href>hyperlink nascosto
-  const tgMessage =
-    `🚗 <b>NUOVA PRENOTAZIONE AQUALUX</b>\n\n` +
-    `👤 <b>Cliente:</b> ${nome}\n` +
-    `🚙 <b>Auto:</b> ${auto}\n` +
-    `📞 <b>Tel:</b> ${tel}\n` +
-    `📅 <b>Data:</b> ${selSlot.dayName} ${selSlot.dayNum} ${selSlot.month} - ${selSlot.time}\n` +
-    `🛁 <b>Servizio:</b> ${p.label} - ${p.price}\n` +
-    `💳 <b>Pagamento:</b> ${payLabel}\n\n` +
-    `<a href="${richCal}">📆 Aggiungi al calendario</a>`
-
-  // Invio notifica Telegram (istantaneo, invisibile al cliente)
-  if (TELEGRAM_BOT_TOKEN !== 'INSERISCI_QUI_IL_TUO_TOKEN') {
-    fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: tgMessage,
-        parse_mode: 'HTML',
-        disable_web_page_preview: false
-      })
-    }).catch(() => {});
-  }
-
-  // Fallback WA link (visibile nel success screen se Telegram non configurato)
-  // WA già gestito tramite link diretto nel bottone (goStep3)
+  document.getElementById('card-notice').style.display = d.payLabel === 'Carta' ? 'block' : 'none';
   document.getElementById('wa-fallback-wrap').style.display = 'none';
-}
 
+  document.getElementById('avail-section').classList.remove('show');
+  document.getElementById('book-bar').classList.remove('show');
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 function srow(l,v,g=false) {
   return '<div class="suc-row"><span class="l">'+l+'</span><span class="v'+(g?' g':'')+'">'+v+'</span></div>';
 }
